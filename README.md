@@ -16,5 +16,5 @@ Y éste para inicializar el server en el puerto 8080
 npm run dev
 ```
 
-## Curso de Programacion Backend
+## Curso de Programacion Backend - Coderhouse
 Dictado por el Profesor [Marcos Villanueva](https://github.com/marcosvillanueva9)
