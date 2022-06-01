@@ -17,4 +17,4 @@ npm run dev
 ```
 
 ## Curso de Programacion Backend
-Dictado por el Profesor Marcos Villanueva [GitHub del Profe](https://github.com/marcosvillanueva9)
+Dictado por el Profesor [Marcos Villanueva](https://github.com/marcosvillanueva9)
