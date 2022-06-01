@@ -1,7 +1,7 @@
 # Desafio de Chat y Listado de Productos con WebSockets
 
 # ¡Importante!
-Crear una database en en MySQL llamada "db-ecommerce" y despues seguir estos pasos
+Crear una database en en MySQL llamada "db-ecommerce" y despues seguir estos pasos  
 ·Instalar las dependencias con npm usando el siguiente comando:
 ```
 npm i ejs express knex moment mysql nodemon socket.io sqlite3
