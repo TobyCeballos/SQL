@@ -1,6 +1,6 @@
 # Desafio de Chat y Listado de Productos con WebSockets
 
-**¡Importante!**
+## ¡Importante!
 Crear una database en en MySQL llamada "db-ecommerce" y despues seguir estos pasos  
 ·Instalar las dependencias con npm usando el siguiente comando:
 ```
