@@ -6,7 +6,7 @@ Crear una database en en MySQL llamada "db-ecommerce" y despues seguir estos pas
 ```
 npm i ejs express knex moment mysql nodemon socket.io sqlite3
 ```
-Luego de realizarlo, ejecutar los comandos que aparecen a continuación:
+Luego de realizarlo, ejecutar los comandos que aparecen a continuación:  
 Éste para crear la tabla dentro de la base de datos:
 ```
 npm start
