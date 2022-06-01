@@ -17,6 +17,6 @@ npm run dev
 ```
 
 ## Curso de Programacion Backend - Coderhouse
-Dictado por el Profesor [Marcos Villanueva](https://github.com/marcosvillanueva9)(+)
-+Tutor [Miguel Avalle](https://github.com/Miguegithub78)
+Dictado por el Profesor [Marcos Villanueva](https://github.com/marcosvillanueva9)
+<sub>Tutor [Miguel Avalle](https://github.com/Miguegithub78)</sub>
 
