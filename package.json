@@ -1,0 +1,32 @@
+{
+  "name": "appchat",
+  "version": "1.0.0",
+  "description": "¡Importante!\r Instalar las dependencias con npm usando el siguiente comando:\r ```\r npm i ejs nodemon socket.io express\r ```\r Luego de realizarlo, ejecutar el comando que aparece a continuación, para inicializar el server en el puerto 8080:\r ```\r npm run dev\r ```",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./src/scriptDB/crearTablas.js",
+    "dev": "nodemon /src/server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.1.8",
+    "express": "^4.18.1",
+    "knex": "^2.1.0",
+    "moment": "^2.29.3", 
+    "mysql": "^2.18.1",
+    "nodemon": "^2.0.16",
+    "socket.io": "^4.5.1",
+    "sqlite3": "^5.0.8"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TobyCeballos/appchat.git"
+  },
+  "bugs": {
+    "url": "https://github.com/TobyCeballos/appchat/issues"
+  },
+  "homepage": "https://github.com/TobyCeballos/appchat#readme"
+}
