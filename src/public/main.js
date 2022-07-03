@@ -22,7 +22,8 @@ function render(data) {
                 <td>${elem.description}</td>
                 <td>${elem.stock}</td>
                 <td><img src="${elem.thumbnail}" height="50px"></img></td>
-                <td>${elem.id}</td></tr>`)
+                <td>${elem.id}</td>
+                <td><a class="btn btn-danger material-symbols-outlined" href="http://localhost:8080/delete/${elem.id}"> delete</a></td></tr>`)
             }).join(" ")
             document.getElementById("product").innerHTML = html
         } else {
@@ -43,8 +44,8 @@ sockets.on("product", function(data) {render(data)})
 function addMessage(a) {
     let date = new Date();
     const message = {
-        author: document.getElementById("username").value,
-        message: document.getElementById("text").value,
+        email: document.getElementById("username").value,
+        text: document.getElementById("text").value,
         fecha: date.toLocaleDateString(),
         hora: date.toLocaleTimeString(),
     }
@@ -55,14 +56,16 @@ function addMessage(a) {
 function renders(dato) {
     try {
         if(dato.length > 0){
-            const html2 = dato.map((element, index) => {
-                return(`<div class="container__mensajes">
-                    <div class="text__mensaje">
-                        <h3 class="nombre">${element.author}</h3>
-                        <p class="texto">: ${element.message}</p>
+            const html2 = dato.map((element) => {
+                return(`<div class="row">
+                    <div class="col">
+                        <h3 class="fs-6 text-warning">${element.email}:</h3>
                     </div>
-                    <div class="fecha">
-                        <p class="date">[ ${element.fecha} - ${element.hora} ]</p>
+                    <div class="col gx-0">
+                        <h3 class="fs-6 text-start text-light">${element.text}</h3>
+                    </div>
+                    <div class="col gx-0">
+                        <h3 class="fs-6 text-end text-secondary">[${element.hora}]</h3>
                     </div>
                 </div>`)
             }).join(" ")

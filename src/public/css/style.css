@@ -92,8 +92,49 @@ body::-webkit-scrollbar-thumb {
 }
 
 
+.datos__container{
+    display: flex;
+    justify-content: space-around;
+    width: 90%;
+    margin-left: 5%;
+    background: #e2a413;
+}
+
+.container__bye{
+    display: flex;
+    background: #126ee6;
+    align-items: center;
+    text-align: center;
+    width:40%;
+    border-radius: 20px;
+    height: 20vh;
+    margin-top: 40vh;
+    margin-left: 30%;    
+}
 
 
+.text-center {
+    color: #F5F5F5;
+    font-size: 40px;
+    width: 50%;
+    margin-left:25%;
+    padding-top: auto;
+}
+
+.name__bye {
+    color: #fff200;
+}
+
+.dato__desloguer {
+    text-decoration: none;
+    color: #F8F8F8;
+    background: #126ee6;
+    padding: 10px;
+}
+
+.dato {
+    padding: 20px;
+}
 
 .form__chat{
     text-align: center;
