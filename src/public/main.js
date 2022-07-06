@@ -23,7 +23,7 @@ function render(data) {
                 <td>${elem.stock}</td>
                 <td><img src="${elem.thumbnail}" height="50px"></img></td>
                 <td>${elem.id}</td>
-                <td><a class="btn btn-danger material-symbols-outlined" href="http://localhost:8080/delete/${elem.id}"> delete</a></td></tr>`)
+                <td><a class="btn btn-danger material-symbols-outlined" href="https://crmchat.herokuapp.com/delete/${elem.id}"> delete</a></td></tr>`)
             }).join(" ")
             document.getElementById("product").innerHTML = html
         } else {
