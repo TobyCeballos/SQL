@@ -7,23 +7,16 @@ const app = express()
 const httpServer = new HttpServer(app)
 const io = new IOServer(httpServer)
 const usersList = require('./src/controllers/contenedorUsers')
-
 const session = require('express-session')
 const connectMongo = require('connect-mongo')
 const cookieParser = require('cookie-parser')
-
-const advancedOptions = {useNewUrlParser: true, useUnifiedTopology: true }
-
+const advancedOptions = { useNewUrlParser: true, useUnifiedTopology: true }
 const MongoStorage = connectMongo.create({
     mongoUrl: 'mongodb+srv://tobyceballos:coderhouse@cluster0.erpbj.mongodb.net/Cluster0?retryWrites=true&w=majority',
     mongoOptions: advancedOptions,
     ttl: 600
 })
 
-
-app.use(express.static('./src/public'))
-app.set('view engine', 'ejs')
-app.use(cookieParser())
 app.use(
     session({
         store: MongoStorage,
@@ -33,111 +26,102 @@ app.use(
         cookie: {
             maxAge: 60000 * 10
         },
-    }));
-app.use(express.json())
-app.use(express.urlencoded({ extended: true}))
-app.use((req, res, next) => {
-    req.isAuthenticated = () => {
-        if (req.session.email) {
-            return true
-        }
-        return false
-    }
-    req.logout = done => {
-        req.session.destroy(done)
-    }
-    next()
-})
+    })
+);
 
 //---------------------------------------------------//
-// Verificar Autenticacion
+const passport = require('passport')
+const { Strategy: LocalStrategy } = require('passport-local')
 //---------------------------------------------------//
 
-app.use((req, res, next) => {
-    req.isAuthenticated = () => {
-        if (req.session.email) {
-            return true
-        }
-        return false
-    }
-    req.logout = done => {
-        req.session.destroy(done)
-    }
-    next()
-})
 
-//---------------------------------------------------//
-// RUTAS REGISTRO
-//---------------------------------------------------//
 
-app.get('/register', (req, res) => {
-    res.render('register')
-})
-
-app.post('/register', async (req, res) => {
-    const { user, email, password } = req.body
-    req.session.name = user
-
-    console.log(email)
-    const usuarios = await usersList.getUsers()
-    const usuario = usuarios.find(usuario => usuario.email == email)
+passport.use('register', new LocalStrategy({
+    usernameField: 'email',
+    passwordField: 'password',
+    passReqToCallback: true
+}, async (req, email, password, done) => {
+    const usuario = await usersList.getUser(email)
+    console.log(usuario)
     if (usuario) {
-        return res.render('register-error')
+        return done('The Email is already Taken.');
+    } else {
+        const user = req.body.user
+        const saved = await usersList.saveUser({ user, email, password });
+        done(null, saved);
     }
+}));
 
-    await usersList.saveUser({ user, email, password })
-    res.redirect('/login')
-})
+passport.use('login', new LocalStrategy({
+    usernameField: 'email',
+    passwordField: 'password',
+    passReqToCallback: true
+}, async (req, email, password, done) => {
+    const user = await usersList.getUser({ email: email });
+    if (!user) {
+        return done('404 => Not found user.');
+    }
+    if (!user.comparePassword(password)) {
+        return done('Incorrect password.');
+    }
+    return done(null, user);
+}));
+passport.serializeUser(function (user, done) {
+    done(null, user);
+});
 
-//---------------------------------------------------//
-// RUTAS LOGIN
-//---------------------------------------------------//
+passport.deserializeUser(function (user, done) {
+    done(null, user);
+});
 
-app.get('/login', (req, res) => {
+
+app.use(passport.initialize())
+app.use(passport.session())
+app.set('view engine', 'ejs')
+app.use(cookieParser())
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+app.use(express.static('./src/public'))
+
+function isAuth(req, res, next) {
     if (req.isAuthenticated()) {
-        res.redirect('/datos')
-    }
-    res.render('login')
-})
-
-app.post('/login', async (req, res) => {
-    const { email, password } = req.body
-
-    req.session.email = email
-    
-    const usuarios = await usersList.getUsers()
-    const usuario = usuarios.find(
-        usuario => usuario.email == email && usuario.password == password
-    )
-    if (!usuario) {
-        console.log(usuarios)
-        return res.render('login-error')
-    }
-    req.session.user = usuario.user
-    res.redirect('/datos')
-})
-
-//---------------------------------------------------//
-// RUTAS DATOS
-//---------------------------------------------------//
-
-async function requireAuthentication(req, res, next) {
-    if (req.isAuthenticated()) {
-        next()
+        res.redirect('/')
     } else {
         res.redirect('/login')
     }
 }
 
-async function includeUserData(req, res, next) {
-    if (req.session.email) {
-        const usuarios = await usersList.getUsers()
-        req.user = usuarios.find(usuario => usuario.email == req.session.email)
-    }
-    next()
-}
 
-app.get('/datos', requireAuthentication, includeUserData, async (req, res) => {
+app.get('/register', (req, res) => {
+    res.render('register')
+})
+
+app.post('/register', passport.authenticate('register', { failureRedirect: '/failregister', successRedirect: '/login' }))
+
+app.get('/failregister', (req, res) => {
+    res.render('register-error')
+})
+
+//---------------------------------------------------//
+// RUTAS LOGIN
+
+app.get('/login', (req, res, next) => {
+    if (req.isAuthenticated()) {
+        res.redirect('/')
+    }
+    res.render('login')
+})
+
+app.post('/login', passport.authenticate('login', { failureRedirect: '/faillogin', successRedirect: '/datos' }))
+
+app.get('/faillogin', (req, res) => {
+    res.render('login-error')
+})
+
+//---------------------------------------------------//
+// RUTAS DATOS
+
+app.get('/datos', isAuth, (req, res) => {
     const user = req.session.user
     console.log(user)
     const email = req.session.email
@@ -147,7 +131,6 @@ app.get('/datos', requireAuthentication, includeUserData, async (req, res) => {
 
 //---------------------------------------------------//
 // RUTAS LOGOUT
-//---------------------------------------------------//
 
 app.get('/logout', (req, res) => {
     req.logout(err => {
@@ -156,18 +139,15 @@ app.get('/logout', (req, res) => {
 })
 
 //---------------------------------------------------//
-// RUTA INICIO
+// RUTAS INICIO
+
+app.get('/', isAuth, (req, res) => {
+    res.redirect('/datos')
+})
+
 //---------------------------------------------------//
 
-app.get('/', (req, res) => {
-    res.redirect('/datos')
-})
 
-app.get('/delete/:id', async (req, res) => {
-    const idDelete = req.params.id
-    const deleteId = await Container.deleteById(idDelete)
-    res.redirect('/datos')
-})
 
 
 io.on('connection', async (sockets) => {
@@ -182,9 +162,9 @@ io.on('connection', async (sockets) => {
         const price = data.price
         const stock = data.stock
         const thumbnail = data.thumbnail
-        await Container.saveProd({name, description, price, stock, thumbnail})
-        
-        
+        await Container.saveProd({ name, description, price, stock, thumbnail })
+
+
         io.sockets.emit('product', await Container.getProds())
     })
     sockets.on('new-message', async dato => {

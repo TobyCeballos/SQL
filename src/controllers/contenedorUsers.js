@@ -25,6 +25,22 @@ class Contenedor {
         return saves
     };
 
+    
+    async getUser(username) {
+        try {
+            const obj = await this.getUsers()
+            console.log(obj)
+            for (const user of obj) {
+                if (user.email === username){
+                    return user;
+                }
+            }
+            return false
+        } catch (error) {
+            console.log('ERROR ->', error);
+        }
+    }
+
     async getUsers(){
         const gets = await this.collection.find()
         return gets
